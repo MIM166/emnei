@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lovely Pink Letter</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&family=Poppins:wght@300;400;500&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #ffeef8 0%, #ffe0f0 30%, #ffd4e8 70%, #ffc8e0 100%);
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Floating hearts animation */
+        .hearts {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .heart {
+            position: absolute;
+            color: rgba(255, 182, 193, 0.3);
+            font-size: 20px;
+            animation: float 6s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            max-width: 900px;
+            width: 90%;
+            margin: 0 auto;
+        }
+
+        .title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem;
+            color: #d63384;
+            margin-bottom: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            animation: titleGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from { text-shadow: 2px 2px 4px rgba(214, 51, 132, 0.3); }
+            to { text-shadow: 2px 2px 20px rgba(214, 51, 132, 0.6); }
+        }
+
+        .letter-envelope {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            margin: 0 auto 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .letter-envelope:hover {
+            transform: translateY(-10px);
+        }
+
+        .envelope {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #ff9ec7, #ff8cc7);
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(255, 182, 193, 0.4);
+            overflow: hidden;
+        }
+
+        .envelope::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(145deg, #ffb6db, #ffa3d1);
+            clip-path: polygon(0 0, 50% 70%, 100% 0);
+            z-index: 2;
+        }
+
+        .envelope::after {
+            content: '💕';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            z-index: 3;
+        }
+
+        .letter-paper {
+            position: absolute;
+            top: 20%;
+            left: 10%;
+            width: 80%;
+            height: 70%;
+            background: #fff;
+            border-radius: 5px;
+            transform: translateY(100%);
+            transition: all 0.6s ease;
+            z-index: 1;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .envelope.opened .letter-paper {
+            transform: translateY(0);
+        }
+
+        .click-hint {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.2rem;
+            color: #d63384;
+            margin-top: 1rem;
+            opacity: 0.8;
+        }
+
+        .feelings-container {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 182, 193, 0.3);
+        }
+
+        .feelings-container.active {
+            display: block;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stage {
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.5s ease;
+        }
+
+        .stage.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .stage-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem;
+            color: #d63384;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stage-number {
+            background: linear-gradient(145deg, #ff9ec7, #d63384);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .feeling-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ffb6db;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            background: rgba(255, 240, 248, 0.7);
+            transition: all 0.3s ease;
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .feeling-input:focus {
+            outline: none;
+            border-color: #d63384;
+            box-shadow: 0 0 10px rgba(214, 51, 132, 0.2);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .feeling-input::placeholder {
+            color: #ff9ec7;
+            font-style: italic;
+        }
+
+        .save-btn {
+            background: linear-gradient(145deg, #d63384, #ff9ec7);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-family: 'Dancing Script', cursive;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            box-shadow: 0 5px 15px rgba(214, 51, 132, 0.3);
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(214, 51, 132, 0.4);
+        }
+
+        .photo-text-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 3rem;
+            min-height: 500px;
+            position: relative;
+        }
+
+        .memory-row {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+            margin-bottom: 3rem;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+
+        .memory-row.reverse {
+            flex-direction: row-reverse;
+        }
+
+        .photo-section {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: translateX(-50px);
+            animation: slideInLeft 1s ease forwards;
+        }
+
+        .memory-row.reverse .photo-section {
+            transform: translateX(50px);
+            animation: slideInRight 1s ease forwards;
+        }
+
+        @keyframes slideInRight {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .photo-frame {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            border: 3px solid #ffb6db;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+        }
+
+        .our-photo {
+            width: 250px;
+            height: 200px;
+            object-fit: contain;
+            display: block;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .text-section {
+            flex: 1;
+            padding: 1.5rem;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .memory-text {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(214, 51, 132, 0.1);
+            border-left: 4px solid #d63384;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .letter-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
+            opacity: 0;
+            transform: translateY(50px) scale(0.9);
+            animation: popIn 1s ease 1.5s forwards;
+            position: relative;
+            z-index: 10;
+        }
+
+        .cute-letter {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border: 2px solid #ffb6db;
+            font-family: 'Dancing Script', cursive;
+            flex-grow: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cute-letter::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(255, 182, 193, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .letter-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .letter-to {
+            font-size: 1.8rem;
+            color: #d63384;
+            font-weight: 600;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .letter-content {
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .letter-paragraph {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .letter-paragraph.show {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .letter-signature {
+            margin-top: 2rem;
+            text-align: right;
+        }
+
+        .love-from {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .signature {
+            font-size: 1.3rem;
+            color: #d63384;
+            font-weight: 600;
+        }
+
+        .next-btn {
+            background: linear-gradient(145deg, #d63384, #ff9ec7);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-family: 'Dancing Script', cursive;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1.5rem;
+            box-shadow: 0 8px 20px rgba(214, 51, 132, 0.3);
+            opacity: 0;
+            transform: translateY(30px);
+            animation: slideUp 0.8s ease 4s forwards;
+        }
+
+        .next-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(214, 51, 132, 0.4);
+        }
+
+        @keyframes slideInLeft {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes popIn {
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .photo-text-layout {
+                flex-direction: column;
+                gap: 2rem;
+            }
+            
+            .our-photo {
+                width: 100%;
+                height: 250px;
+            }
+            
+            .letter-section {
+                padding: 1rem;
+            }
+            
+            .cute-letter {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating hearts -->
+    <div class="hearts" id="hearts"></div>
+
+    <div class="container">
+        <h1 class="title">A Letter To You</h1>
+        
+        <div class="letter-envelope" id="letterEnvelope">
+            <div class="envelope" id="envelope">
+                <div class="letter-paper"></div>
+            </div>
+            <div class="click-hint">Click to open the letter 💕</div>
+        </div>
+
+        <div class="feelings-container" id="feelingsContainer">
+            <div class="photo-text-layout">
+                <!-- Memory 1 - Left photo, Right text -->
+                <div class="memory-row" style="animation-delay: 0.5s">
+                    <div class="photo-section">
+                        <div class="photo-frame">
+                            <img src="3.jpg" class="our-photo" alt="Our First Memory" />
+                        </div>
+                    </div>
+                    <div class="text-section">
+                        <div class="memory-text">
+                            " Well in our past meetings , except these , I thought this would be our last meeeting for a while . So I tried to do and express everything that happened to me in last those days . '
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Memory 2 - Right photo, Left text -->
+                <div class="memory-row reverse" style="animation-delay: 1s">
+                    <div class="photo-section">
+                        <div class="photo-frame">
+                            <img src="4.jpg" class="our-photo" alt="Our Adventure Together" />
+                        </div>
+                    </div>
+                    <div class="text-section">
+                        <div class="memory-text">
+                            "But I love to see your happy face , Your long nonstop talking , Your cute ambitious ways of how to dominate this fucking country ."
+                           </div>
+                    </div>
+                </div>
+
+                <!-- Memory 3 - Left photo, Right text -->
+                <div class="memory-row" style="animation-delay: 1.5s">
+                    <div class="photo-section">
+                        <div class="photo-frame">
+                            <img src="5.jpg" class="our-photo" alt="Quiet Moments" />
+                        </div>
+                    </div>
+                    <div class="text-section">
+                        <div class="memory-text">
+                            "I like being silenced when I am with you. But I will be with you and want to explore every phase of our life and have a conversation starting with "janish ajk ki hoise " Lol "
+                            </div>
+                    </div>
+                </div>
+
+                <!-- Memory 4 - Right photo, Left text -->
+                <div class="memory-row reverse" style="animation-delay: 2s">
+                    <div class="photo-section">
+                        <div class="photo-frame">
+                            <img src="6.jpg" class="our-photo" alt="Future Dreams" />
+                        </div>
+                    </div>
+                    <div class="text-section">
+                        <div class="memory-text">
+                            "Man I love this photo of ours "
+                           </div>
+                    </div>
+                </div>
+
+                <!-- Final Letter Section -->
+                <div class="letter-section" id="letterSection" style="animation-delay: 2.5s">
+                    <div class="cute-letter">
+                        <div class="letter-header">
+                            <span class="letter-to">My ukipookielittlequki</span>
+                        </div>
+                        
+                        <div class="letter-content">
+                            
+                            <p class="letter-paragraph">In my first celebration of letter day , Maybe I am doing the cringiest shit of my life , permitting you to send me reels in whatever situation we will be in our future </p>
+                            
+                            <p class="letter-paragraph">  I will try to be the person you imagined , even if I fail miserably , please don't leave me</p>
+                            <div class="letter-signature">
+                                <p class="love-from">With all my heart,</p>
+                                <p class="signature">Your cute bacha  💖</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="next-btn" id="nextButton">Next Chapter 💖</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create floating hearts
+        function createHearts() {
+            const heartsContainer = document.getElementById('hearts');
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'heart';
+                    heart.innerHTML = '💖';
+                    heart.style.left = Math.random() * 100 + '%';
+                    heart.style.animationDelay = Math.random() * 6 + 's';
+                    heart.style.animationDuration = (4 + Math.random() * 4) + 's';
+                    heartsContainer.appendChild(heart);
+
+                    // Remove heart after animation
+                    setTimeout(() => {
+                        if (heart.parentNode) {
+                            heart.parentNode.removeChild(heart);
+                        }
+                    }, 8000);
+                }, i * 400);
+            }
+        }
+
+        // Continuously create hearts
+        setInterval(createHearts, 6000);
+        createHearts();
+
+        document.getElementById('letterEnvelope').addEventListener('click', function() {
+            const envelope = document.getElementById('envelope');
+            const feelingsContainer = document.getElementById('feelingsContainer');
+            
+            envelope.classList.add('opened');
+            
+            setTimeout(() => {
+                document.querySelector('.letter-envelope').style.display = 'none';
+                feelingsContainer.classList.add('active');
+                startMemoriesAnimation();
+            }, 600);
+        });
+
+        function startMemoriesAnimation() {
+            // Animate memory rows one by one
+            const memoryRows = document.querySelectorAll('.memory-row');
+            memoryRows.forEach((row, index) => {
+                setTimeout(() => {
+                    row.style.opacity = '1';
+                    const photoSection = row.querySelector('.photo-section');
+                    const textSection = row.querySelector('.text-section');
+                    
+                    photoSection.style.opacity = '1';
+                    photoSection.style.transform = 'translateX(0)';
+                    
+                    setTimeout(() => {
+                        textSection.style.opacity = '1';
+                        textSection.style.transform = 'translateY(0)';
+                    }, 300);
+                }, index * 800 + 500);
+            });
+            
+            // Show final letter section
+            setTimeout(() => {
+                const letterSection = document.getElementById('letterSection');
+                letterSection.style.opacity = '1';
+                letterSection.style.transform = 'translateY(0) scale(1)';
+                
+                // Animate letter paragraphs
+                const paragraphs = document.querySelectorAll('.letter-paragraph');
+                paragraphs.forEach((paragraph, index) => {
+                    setTimeout(() => {
+                        paragraph.classList.add('show');
+                    }, index * 600 + 1000);
+                });
+            }, memoryRows.length * 800 + 1000);
+        }
+
+        document.getElementById('nextButton').addEventListener('click', function() {
+            // Show completion message for now
+            const thankYouMessage = document.createElement('div');
+            thankYouMessage.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(214, 51, 132, 0.95);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+                color: white;
+                font-family: 'Dancing Script', cursive;
+                font-size: 2.5rem;
+                text-align: center;
+                animation: fadeIn 0.5s ease;
+            `;
+            thankYouMessage.innerHTML = `
+                <div>
+                    <div style="font-size: 4rem; margin-bottom: 20px;">💕</div>
+                    <div>Our dosti se jada but pyaar se kam wala story continues...</div>
+                    <div style="font-size: 1.5rem; margin-top: 20px; opacity: 0.8;">Ready for the next beautiful chapter! ✨</div>
+                    <div style="font-size: 1rem; margin-top: 30px; opacity: 0.6;">Click anywhere to continue</div>
+                </div>
+            `;
+            
+            thankYouMessage.addEventListener('click', function() {
+                thankYouMessage.remove();
+            });
+            
+            document.body.appendChild(thankYouMessage);
+        });
+
+        // Add some sparkle effects when typing
+        document.querySelectorAll('.feeling-input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>
